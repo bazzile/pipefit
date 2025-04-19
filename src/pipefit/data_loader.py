@@ -163,27 +163,30 @@ class DataLoader:
 
 def load_reference_path(path: str) -> gpd.GeoDataFrame:
     """
-    Load a reference path from a shapefile.
+    Load a reference path from a GeoJSON file.
     
     Args:
-        path: Path to the shapefile or directory containing a shapefile
+        path: Path to the GeoJSON file or directory containing a GeoJSON file
         
     Returns:
         GeoDataFrame containing the reference path
     """
-    # If a directory is provided, look for shapefiles
+    # If a directory is provided, look for GeoJSON files
     if os.path.isdir(path):
-        shapefile_pattern = os.path.join(path, '*.shp')
-        shapefile_list = glob(shapefile_pattern)
+        geojson_pattern = os.path.join(path, '*.geojson')
+        # Also search for .json files that might be GeoJSON format
+        json_pattern = os.path.join(path, '*.json')
         
-        if not shapefile_list:
-            raise FileNotFoundError(f"No shapefile found in {path}")
+        geojson_list = glob(geojson_pattern) + glob(json_pattern)
         
-        # Use the first shapefile found
-        path = shapefile_list[0]
+        if not geojson_list:
+            raise FileNotFoundError(f"No GeoJSON file found in {path}")
+        
+        # Use the first GeoJSON file found
+        path = geojson_list[0]
     
-    # Load the shapefile
-    gdf = gpd.read_file(path)
+    # Load the GeoJSON file
+    gdf = gpd.read_file(path, driver='GeoJSON')
     
     print(f"Loaded reference path from {path}")
     return gdf
