@@ -120,7 +120,8 @@ class DataLoader:
             count=1,
             dtype=data.dtype,
             crs=metadata['crs'],
-            transform=metadata['transform']
+            transform=metadata['transform'],
+            compress='deflate'
         ) as dst:
             dst.write(data, 1)
             
